@@ -4,7 +4,7 @@ from holmosapien.AAA      import AAA
 from holmosapien.Products import Product
 
 def handler(event, context):
-    print 'GetProduct called with event {}, context {}'.format(event, context)
+    print 'UpdateProduct called with event {}, context {}'.format(event, context)
 
     principal = event['context']['authorizer-principal-id']
     path      = event['params']['path']
@@ -32,12 +32,26 @@ def handler(event, context):
         raise Exception('Not Found')
 
     #
-    # Attempt to fetch the product.
+    # Get the existing product details.
     #
 
     product = Product(organization_id = organizationId, sku = sku)
 
     product.get()
+
+    #
+    # Update the product.
+    #
+
+    try:
+        update = event['body-json']['product']
+
+    except KeyError:
+        raise Exception('Bad Request')
+
+    product.update(update)
+
+    print 'Updated product: {}'.format(product)
 
     return { 'product' : product.dict() }
 
@@ -51,6 +65,12 @@ if __name__ == '__main__':
         },
         'context' : {
             'authorizer-principal-id' : 'email|nobody@invalid'
+        },
+        'body-json' : {
+            'product' : {
+                'sku' : '08-0000-02',
+                'sale_price' : 5.40
+            }
         }
     }
 

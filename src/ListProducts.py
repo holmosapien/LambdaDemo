@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 from holmosapien.AAA      import AAA
-from holmosapien.Products import Products
+from holmosapien.Products import ProductList
 
 def handler(event, context):
     print 'ListProducts called with event {}, context {}'.format(event, context)
@@ -35,19 +35,18 @@ def handler(event, context):
     # Now we can fetch the products for that organization.
     #
 
-    out = []
+    products = []
 
     for organizationId in allowed:
         print 'Fetching products for organization ID {}'.format(organizationId)
 
-        p = Products()
+        productList = ProductList(organizationId)
 
-        products = p.list(organizationId)
+        productList.get()
 
-        for product in products:
-            out.append(product)
+        products.extend(productList.array())
 
-    return { 'products' : out }
+    return { 'products' : products }
 
 if __name__ == '__main__':
     event = {
