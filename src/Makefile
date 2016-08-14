@@ -1,4 +1,4 @@
-MODULES = GetProduct GetUserByToken ListProducts VerifyUser
+MODULES = Authorize GetProduct GetUserByToken ListProducts VerifyUser
 
 package:
 	for module in $(MODULES); do \
